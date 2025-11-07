@@ -1,0 +1,3510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/static/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-color, #e2e8f0);
+            min-height: 100vh;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background: var(--bg-gradient, linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%));
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        body {
+            background: transparent;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 1rem;
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 30px var(--accent-color, rgba(102, 126, 234, 0.3));
+        }
+
+        .header p {
+            font-size: 1rem;
+            color: #94a3b8;
+            font-weight: 300;
+        }
+
+        .tab-navigation {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 0.4rem 0.5rem;
+            gap: 0.5rem;
+            flex-shrink: 0;
+            margin-bottom: 0.25rem;
+            overflow-x: hidden;
+        }
+
+        .tabs-container {
+            display: flex;
+            gap: 0.25rem;
+            flex: 1;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+        }
+
+        .tabs-container::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .tabs-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .tabs-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: var(--card-bg, rgba(255, 255, 255, 0.05));
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+            border-radius: 12px;
+            color: var(--text-color, #94a3b8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            background: var(--border-color, rgba(255, 255, 255, 0.1));
+            color: var(--text-color, #f1f5f9);
+            transform: translateY(-1px);
+        }
+
+        .tab-btn.active {
+            background: var(--accent-color, rgba(102, 126, 234, 0.2));
+            border-color: var(--accent-color, rgba(102, 126, 234, 0.4));
+            color: white;
+        }
+
+        .tab-btn.drag-over {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: rgba(34, 197, 94, 0.4);
+            color: #4ade80;
+            transform: scale(1.05);
+        }
+
+        .tab-navigation.drag-over {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .tab-name {
+            outline: none;
+            background: transparent;
+            border: none;
+            color: inherit;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .tab-name:focus {
+            text-decoration: underline;
+        }
+
+        .tab-close {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 4px;
+            color: #e2e8f0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+
+        .tab-close:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .tab-add-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: var(--accent-color, rgba(102, 126, 234, 0.2));
+            border: 1px solid var(--accent-color, rgba(102, 126, 234, 0.3));
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .tab-add-btn:hover {
+            background: var(--accent-color, rgba(102, 126, 234, 0.3));
+            border-color: var(--accent-color, rgba(102, 126, 234, 0.5));
+            color: var(--accent-color, #764ba2);
+            transform: scale(1.1);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-color, #667eea) 0%, var(--accent-color, #764ba2) 100%);
+            border: 1px solid var(--border-color, rgba(102, 126, 234, 0.3));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--accent-color, #5a67d8) 0%, var(--accent-color, #6b46c1) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--accent-color, rgba(102, 126, 234, 0.3));
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--accent-color, rgba(102, 126, 234, 0.4));
+        }
+
+        .btn-secondary {
+            background: var(--card-bg, rgba(255, 255, 255, 0.05));
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+            color: var(--text-color, #e2e8f0);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--border-color, rgba(255, 255, 255, 0.1));
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
+        }
+
+        .columns-container {
+            display: flex;
+            gap: 1.5rem;
+            flex: 1;
+            align-items: flex-start;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .column {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1rem;
+            flex: 1;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .column.drag-over {
+            background: var(--accent-color, rgba(102, 126, 234, 0.1));
+            border-color: var(--accent-color, rgba(102, 126, 234, 0.3));
+        }
+
+        .column-header {
+            text-align: center;
+            padding: 0.5rem 0 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .column-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .services-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+            scrollbar-width: thin;
+            scrollbar-color: transparent transparent;
+            position: relative;
+        }
+
+        .services-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .services-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .services-list::-webkit-scrollbar-thumb {
+            background: transparent;
+            border-radius: 3px;
+        }
+
+        .services-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .service-card {
+            background: var(--card-bg, rgba(255, 255, 255, 0.02));
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.05));
+            border-radius: 8px;
+            padding: 0.4rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-color, #667eea), var(--accent-color, #764ba2));
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-color, rgba(102, 126, 234, 0.3));
+        }
+
+        .service-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .service-card.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        /* Hide scrollbars during drag operations - only on desktop */
+        @media (min-width: 769px) {
+            body.dragging .services-list {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+
+            body.dragging .services-list::-webkit-scrollbar {
+                display: none;
+            }
+
+            body.dragging .columns-container {
+                overflow: hidden;
+            }
+
+            body.dragging .column {
+                overflow: hidden;
+            }
+
+            body.dragging {
+                overflow: hidden;
+            }
+        }
+
+        /* On mobile, allow main window scrolling during drag */
+        @media (max-width: 768px) {
+            body.dragging {
+                overflow: auto;
+            }
+            
+            body.dragging .columns-container {
+                overflow: visible;
+            }
+            
+            body.dragging .column {
+                overflow: visible;
+            }
+            
+            body.dragging .services-list {
+                overflow: visible;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        body.dragging .tab-navigation {
+            overflow-x: hidden;
+        }
+
+        body.dragging .tabs-container {
+            overflow-x: hidden;
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.05rem;
+        }
+
+        .service-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            gap: 0.3rem;
+        }
+
+        .service-title-url {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .service-info h3 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-color, #f1f5f9);
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 0 1 auto;
+            min-width: 0;
+            max-width: 200px;
+        }
+
+        .service-info p {
+            color: #94a3b8;
+            font-size: 0.7rem;
+            margin: 0.1rem 0 0 0;
+            line-height: 1.2;
+        }
+
+        .service-url {
+            color: var(--text-color, #94a3b8);
+            font-size: 0.7rem;
+            font-family: 'Monaco', monospace;
+            background: var(--card-bg, rgba(255, 255, 255, 0.05));
+            padding: 2px 6px;
+            border-radius: 3px;
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1 1 auto;
+            min-width: 0;
+            max-width: 180px;
+            opacity: 0.8;
+            transition: all 0.2s ease;
+        }
+
+        .service-url:hover {
+            opacity: 1;
+            background: var(--accent-color, rgba(102, 126, 234, 0.15));
+            border-color: var(--accent-color, rgba(102, 126, 234, 0.3));
+            transform: scale(1.02);
+        }
+
+        .service-actions {
+            display: flex;
+            gap: 2px;
+            flex-shrink: 0;
+        }
+
+        .action-btn {
+            width: 22px;
+            height: 22px;
+            border: none;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            touch-action: manipulation;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .action-btn.edit:hover {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .action-btn.delete:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .action-btn.move:hover {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg, rgba(15, 15, 35, 0.95));
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 800px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal h2 {
+            margin: 0 0 1.5rem 0;
+            color: var(--text-color, #f1f5f9);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-color, #e2e8f0);
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--card-bg, rgba(255, 255, 255, 0.05));
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+            border-radius: 12px;
+            color: var(--text-color, #f1f5f9);
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        /* Fix for dropdown arrow and appearance */
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='var(--text-color, %23f1f5f9)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 20px;
+            padding-right: 40px;
+        }
+
+        .form-group select option {
+            background: var(--card-bg, #1a1a2e);
+            color: var(--text-color, #e2e8f0);
+            padding: 8px 12px;
+        }
+
+        .form-group select option:hover,
+        .form-group select option:checked {
+            background: var(--accent-color, #667eea);
+            color: white;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        /* Backup modal specific styling */
+        #backupModal .modal-content {
+            max-width: 900px;
+            width: 98%;
+            max-height: 85vh;
+        }
+
+        .backup-list {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .backup-item {
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.3s ease;
+        }
+
+        .backup-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .backup-info {
+            flex: 1;
+            margin-bottom: 1rem;
+        }
+
+        .backup-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color, #f1f5f9);
+            margin-bottom: 0.5rem;
+            word-break: break-all;
+        }
+
+        .backup-comment {
+            font-size: 0.9rem;
+            color: var(--text-color, #94a3b8);
+            margin-bottom: 0.75rem;
+            font-style: italic;
+        }
+
+        .backup-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-color, #64748b);
+        }
+
+        .backup-details span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .backup-urls {
+            background: var(--accent-color, rgba(102, 126, 234, 0.1));
+            border: 1px solid var(--border-color, rgba(102, 126, 234, 0.2));
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .backup-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: stretch;
+        }
+
+        .backup-actions .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            min-width: auto;
+            text-align: center;
+        }
+
+        /* Mobile backup modal adjustments */
+        @media (max-width: 768px) {
+            #backupModal .modal-content {
+                max-width: 95%;
+                width: 98%;
+                padding: 1rem;
+                max-height: 90vh;
+            }
+
+            .backup-list {
+                max-height: 50vh;
+            }
+
+            .backup-item {
+                padding: 1rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .backup-name {
+                font-size: 1rem;
+                word-break: break-all;
+            }
+
+            .backup-details {
+                gap: 0.5rem;
+                font-size: 0.75rem;
+            }
+
+            .backup-actions {
+                gap: 0.4rem;
+                align-items: stretch;
+            }
+
+            .backup-actions .btn {
+                padding: 0.4rem 0.5rem;
+                font-size: 0.75rem;
+                min-width: auto;
+                flex: none;
+            }
+
+            .backup-urls {
+                font-size: 0.7rem;
+                padding: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #backupModal .modal-content {
+                padding: 0.75rem;
+            }
+
+            .backup-actions {
+                flex-direction: column;
+                gap: 0.4rem;
+                align-items: stretch;
+            }
+
+            .backup-actions .btn {
+                min-width: auto;
+                flex: none;
+            }
+
+            .backup-actions .btn {
+                min-width: auto;
+                flex: none;
+            }
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--accent-color, rgba(102, 126, 234, 0.3));
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #64748b;
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color, #94a3b8);
+        }
+
+        .empty-state p {
+            color: var(--text-color, #94a3b8);
+            opacity: 0.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state .btn {
+            margin-top: 1rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #94a3b8;
+        }
+
+        /* Toast Container */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            pointer-events: auto;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast.success {
+            border-left: 4px solid #22c55e;
+        }
+
+        .toast i {
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .toast.error i {
+            color: #fca5a5;
+        }
+
+        .toast.success i {
+            color: #4ade80;
+        }
+
+        .toast-message {
+            flex: 1;
+            line-height: 1.4;
+        }
+
+        /* Legacy styles for backward compatibility */
+        .error-message, .success-message {
+            display: none;
+        }
+
+        @media (max-width: 1024px) {
+            .columns-container {
+                flex-direction: column;
+                gap: 1rem;
+                overflow: visible;
+                align-items: stretch;
+            }
+            
+            .column {
+                width: 100%;
+                min-height: auto;
+                max-height: none;
+                flex: none;
+                display: block;
+            }
+
+            .services-list {
+                max-height: none;
+                overflow-y: visible;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
+            color: var(--text-color, white);
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px var(--accent-color, rgba(102, 126, 234, 0.4));
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px var(--accent-color, rgba(102, 126, 234, 0.6));
+        }
+
+        .fab:active {
+            transform: scale(0.95);
+        }
+
+        /* Side Menu */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 300px;
+            height: 100vh;
+            background: var(--card-bg, rgba(15, 15, 35, 0.98));
+            backdrop-filter: blur(20px);
+            border-left: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+            transition: right 0.3s ease;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-menu.open {
+            right: 0;
+        }
+
+        .side-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .side-menu-header h3 {
+            margin: 0;
+            color: var(--text-color, #f1f5f9);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .side-menu-close {
+            background: none;
+            border: none;
+            color: var(--text-color, #94a3b8);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .side-menu-close:hover {
+            background: var(--border-color, rgba(255, 255, 255, 0.1));
+            color: var(--text-color, #f1f5f9);
+        }
+
+        .side-menu-content {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .menu-item {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+            border-radius: 12px;
+            background: var(--card-bg, rgba(255, 255, 255, 0.02));
+            color: var(--text-color, #e2e8f0);
+            text-align: left;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            justify-content: flex-start;
+        }
+
+        .menu-item:hover {
+            background: var(--border-color, rgba(255, 255, 255, 0.1));
+            transform: translateX(4px);
+            box-shadow: 0 8px 25px var(--accent-color, rgba(102, 126, 234, 0.3));
+        }
+
+        .menu-item i {
+            width: 16px;
+            text-align: center;
+            color: var(--text-color, #94a3b8);
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: var(--border-color, rgba(255, 255, 255, 0.1));
+            margin: 0.5rem 0;
+        }
+
+        /* Theme Selection */
+        .theme-section {
+            padding: 1rem 0;
+        }
+
+        .theme-section h4 {
+            margin: 0 0 1rem 0;
+            font-size: 0.9rem;
+            color: var(--text-color, #94a3b8);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .theme-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-size: 0.85rem;
+            color: var(--text-color, #e2e8f0);
+        }
+
+        .theme-option:hover {
+            background: var(--border-color, rgba(255, 255, 255, 0.05));
+        }
+
+        .theme-option input[type="radio"] {
+            margin: 0;
+            accent-color: var(--accent-color, #667eea);
+        }
+
+        .theme-preview {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid var(--border-color, rgba(255, 255, 255, 0.2));
+            flex-shrink: 0;
+        }
+
+        .theme-dark {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+        }
+
+        .theme-light {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+        }
+
+        .theme-blue {
+            background: linear-gradient(135deg, #0c4a6e 0%, #075985 50%, #0c7489 100%);
+        }
+
+        .theme-purple {
+            background: linear-gradient(135deg, #581c87 0%, #6b21a8 50%, #7c3aed 100%);
+        }
+
+        .theme-green {
+            background: linear-gradient(135deg, #14532d 0%, #166534 50%, #15803d 100%);
+        }
+
+        .theme-orange {
+            background: linear-gradient(135deg, #7c2d12 0%, #c2410c 50%, #ea580c 100%);
+        }
+
+        .theme-red {
+            background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 50%, #b91c1c 100%);
+        }
+
+        .theme-teal {
+            background: linear-gradient(135deg, #134e4a 0%, #115e59 50%, #0f766e 100%);
+        }
+
+        /* Menu Overlay */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .menu-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Context Menu */
+        .context-menu {
+            position: fixed;
+            background: var(--card-bg, rgba(15, 15, 35, 0.95));
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 180px;
+            z-index: 10000;
+            display: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .context-menu.show {
+            display: block;
+        }
+
+        .context-menu-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text-color, #e2e8f0);
+            transition: background-color 0.2s ease;
+        }
+
+        .context-menu-item:hover {
+            background: var(--border-color, rgba(255, 255, 255, 0.1));
+        }
+
+        .context-menu-item i {
+            width: 16px;
+            text-align: center;
+            color: var(--text-color, #94a3b8);
+        }
+
+        .context-menu-divider {
+            height: 1px;
+            background: var(--border-color, rgba(255, 255, 255, 0.1));
+            margin: 4px 0;
+        }
+
+        /* Backup Modal */
+        .backup-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 1rem 0;
+        }
+
+        .backup-item {
+            background: var(--card-bg, rgba(255, 255, 255, 0.02));
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.05));
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .backup-info {
+            flex: 1;
+        }
+
+        .backup-name {
+            font-weight: 600;
+            color: var(--text-color, #e2e8f0);
+            margin-bottom: 0.25rem;
+            word-break: break-all;
+        }
+
+        .backup-comment {
+            font-size: 0.85rem;
+            color: var(--text-color, #94a3b8);
+            margin-bottom: 0.5rem;
+            font-style: italic;
+            min-height: 1.2em;
+        }
+
+        .backup-comment:empty::before {
+            content: "No comment";
+            color: var(--text-color, #64748b);
+            font-style: italic;
+            opacity: 0.6;
+        }
+
+        .backup-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .backup-details span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .backup-details i {
+            width: 12px;
+            text-align: center;
+        }
+
+        .backup-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .backup-actions .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .controls {
+                align-items: center;
+            }
+
+            .container {
+                padding: 0.5rem;
+                min-height: 100vh;
+            }
+            
+            .main-content {
+                overflow: visible;
+            }
+            
+            .columns-container {
+                flex-direction: column;
+                gap: 0.75rem;
+                overflow: visible;
+                align-items: stretch;
+                width: 100%;
+            }
+            
+            .column {
+                width: 100%;
+                min-height: auto;
+                flex: none;
+                overflow: visible;
+                display: block;
+                position: relative;
+            }
+
+            .services-list {
+                overflow: visible;
+                max-height: none;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+            }
+
+            .service-card {
+                padding: 0.8rem;
+                min-height: 70px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .service-info h3 {
+                font-size: 1rem;
+                max-width: 150px;
+            }
+
+            .service-url {
+                font-size: 0.75rem;
+                max-width: 120px;
+            }
+
+            .action-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 0.8rem;
+            }
+
+            .fab {
+                bottom: 1rem;
+                right: 1rem;
+                width: 48px;
+                height: 48px;
+                font-size: 1rem;
+            }
+
+            .side-menu {
+                width: 280px;
+                right: -300px;
+            }
+
+            .tab-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.25rem;
+                min-height: 100vh;
+            }
+
+            .columns-container {
+                gap: 0.5rem;
+                overflow: visible;
+                align-items: stretch;
+                width: 100%;
+            }
+
+            .column {
+                overflow: visible;
+                min-height: auto;
+                flex: none;
+                display: block;
+                position: relative;
+                width: 100%;
+            }
+
+            .services-list {
+                overflow: visible;
+                max-height: none;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+            }
+
+            .service-card {
+                padding: 0.75rem;
+                min-height: 70px;
+                width: 100%;
+                box-sizing: border-box;
+                position: relative;
+            }
+
+        .service-info h3 {
+            font-size: 0.9rem;
+            max-width: 120px;
+        }
+
+        .service-url {
+            font-size: 0.8rem;
+            color: var(--text-color, #94a3b8);
+            background: var(--card-bg, rgba(255, 255, 255, 0.05));
+            padding: 1px 4px;
+            border-radius: 2px;
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1 1 auto;
+            min-width: 0;
+            max-width: 100px;
+            opacity: 0.8;
+            transition: all 0.2s ease;
+        }
+
+        .service-url:hover {
+            opacity: 1;
+            background: var(--accent-color, rgba(102, 126, 234, 0.15));
+            border-color: var(--accent-color, rgba(102, 126, 234, 0.3));
+            transform: translateY(-1px);
+        }
+
+        /* Service URLs now use flex layout on all screen sizes - no need for mobile-specific overrides */
+
+        /* Additional mobile adjustments */
+        @media (max-width: 768px) {
+            .action-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 0.8rem;
+            }
+
+            .tab-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-particles"></div>
+    
+    <div class="container">
+	
+	<!--
+        <div class="header">
+            <h1><i class="fas fa-server"></i> Home Lab Dashboard</h1>
+            <p>Your centralized hub for all home lab services</p>
+        </div>
+		-->
+
+        <div class="main-content">
+            <div class="tab-navigation" id="tabNavigation">
+                <div class="tabs-container" id="tabsContainer">
+                    <button class="tab-btn active" data-tab="default" onclick="switchTab('default')">
+                        <span class="tab-name">Default</span>
+                        <button class="tab-close" onclick="deleteTab(event, 'default')" style="display: none;">×</button>
+                    </button>
+                </div>
+                <button class="tab-add-btn" onclick="addNewTab()">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+            <div class="columns-container" id="columnsContainer">
+                <div class="column" data-column="0">
+                    <div class="services-list" id="column0"></div>
+                </div>
+                <div class="column" data-column="1">
+                    <div class="services-list" id="column1"></div>
+                </div>
+                <div class="column" data-column="2">
+                    <div class="services-list" id="column2"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loadingState" class="loading" style="display: none;">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading services...</p>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal" id="serviceModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Add Service</h2>
+            <div class="form-group">
+                <label for="serviceName">Service Name</label>
+                <input type="text" id="serviceName" placeholder="e.g., Plex Media Server">
+            </div>
+            <div class="form-group">
+                <label for="serviceDescription">Description</label>
+                <input type="text" id="serviceDescription" placeholder="Brief description of the service">
+            </div>
+            <div class="form-group">
+                <label for="serviceUrl">URL/IP Address</label>
+                <input type="text" id="serviceUrl" placeholder="e.g., http://192.168.1.100:32400">
+            </div>
+            <div class="form-group">
+                <label for="serviceColumn">Column</label>
+                <select id="serviceColumn">
+                    <option value="0">Column 1</option>
+                    <option value="1">Column 2</option>
+                    <option value="2">Column 3</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="hideModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveService()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Options Modal -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <h2>Export Options</h2>
+            <div class="form-group">
+                <label>What would you like to export?</label>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                        <input type="radio" name="exportOption" value="current" checked style="margin: 0;">
+                        <span>Current tab only (<strong id="currentTabName">Default</strong>)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                        <input type="radio" name="exportOption" value="all" style="margin: 0;">
+                        <span>All tabs and services</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="hideExportModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="performExport()">Export</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Options Modal -->
+    <div class="modal" id="importModal">
+        <div class="modal-content">
+            <h2>Import Options</h2>
+            <div class="form-group">
+                <label>What would you like to import?</label>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                        <input type="radio" name="importOption" value="current" checked style="margin: 0;">
+                        <span>Import to current tab only (<strong id="importCurrentTabName">Default</strong>)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                        <input type="radio" name="importOption" value="all" style="margin: 0;">
+                        <span>Import all tabs (replaces entire dashboard)</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="hideImportModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="performImport()">Choose File</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Move Service Modal -->
+    <div class="modal" id="moveServiceModal">
+        <div class="modal-content">
+            <h2>Move Service to Tab</h2>
+            <div class="form-group">
+                <label>Select destination tab:</label>
+                <select id="moveToTabSelect" class="form-control">
+                    <option value="">Choose a tab...</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="hideMoveServiceModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="moveService()">Move Service</button>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="handleImport(event)">
+
+    <!-- Floating Action Button -->
+    <button class="fab" id="fabButton" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <div class="side-menu-header">
+            <h3>Actions</h3>
+            <button class="side-menu-close" onclick="toggleMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="side-menu-content">
+            <button class="menu-item btn btn-primary" onclick="showAddModal(); toggleMenu();">
+                <i class="fas fa-plus"></i> Add Service
+            </button>
+            <div class="menu-divider"></div>
+            <button class="menu-item btn btn-secondary" onclick="renameCurrentTab(); toggleMenu();">
+                <i class="fas fa-edit"></i> Rename Tab
+            </button>
+            <button class="menu-item btn btn-secondary" onclick="showExportOptions(); toggleMenu();">
+                <i class="fas fa-download"></i> Export
+            </button>
+            <button class="menu-item btn btn-secondary" onclick="showImportOptions(); toggleMenu();">
+                <i class="fas fa-upload"></i> Import
+            </button>
+            <div class="menu-divider"></div>
+            <button class="menu-item btn btn-secondary" onclick="createBackup(); toggleMenu();">
+                <i class="fas fa-save"></i> Create Backup
+            </button>
+            <button class="menu-item btn btn-secondary" onclick="viewBackups(); toggleMenu();">
+                <i class="fas fa-history"></i> View Backups
+            </button>
+            <div class="menu-divider"></div>
+            <div class="theme-section">
+                <h4><i class="fas fa-palette"></i> Theme</h4>
+                <div class="theme-options">
+                    <label class="theme-option">
+                        <input type="radio" name="theme" value="dark" checked onchange="changeTheme('dark')">
+                        <span class="theme-preview theme-dark"></span>
+                        <span>Dark</span>
+                    </label>
+                    <label class="theme-option">
+                        <input type="radio" name="theme" value="light" onchange="changeTheme('light')">
+                        <span class="theme-preview theme-light"></span>
+                        <span>Light</span>
+                    </label>
+                    <label class="theme-option">
+                        <input type="radio" name="theme" value="blue" onchange="changeTheme('blue')">
+                        <span class="theme-preview theme-blue"></span>
+                        <span>Blue</span>
+                    </label>
+                    <label class="theme-option">
+                        <input type="radio" name="theme" value="purple" onchange="changeTheme('purple')">
+                        <span class="theme-preview theme-purple"></span>
+                        <span>Purple</span>
+                    </label>
+                    <label class="theme-option">
+                        <input type="radio" name="theme" value="green" onchange="changeTheme('green')">
+                        <span class="theme-preview theme-green"></span>
+                        <span>Green</span>
+                    </label>
+                    <label class="theme-option">
+                        <input type="radio" name="theme" value="orange" onchange="changeTheme('orange')">
+                        <span class="theme-preview theme-orange"></span>
+                        <span>Orange</span>
+                    </label>
+                    <label class="theme-option">
+                        <input type="radio" name="theme" value="red" onchange="changeTheme('red')">
+                        <span class="theme-preview theme-red"></span>
+                        <span>Red</span>
+                    </label>
+                    <label class="theme-option">
+                        <input type="radio" name="theme" value="teal" onchange="changeTheme('teal')">
+                        <span class="theme-preview theme-teal"></span>
+                        <span>Teal</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+
+    <!-- Tab Context Menu -->
+    <div class="context-menu" id="tabContextMenu">
+        <div class="context-menu-item" onclick="renameTabFromContext()">
+            <i class="fas fa-edit"></i> Rename Tab
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" onclick="deleteTabFromContext()">
+            <i class="fas fa-trash"></i> Delete Tab
+        </div>
+    </div>
+
+    <script>
+        let services = [];
+        let editingIndex = -1;
+        let draggedService = null;
+        let currentTab = 'default';
+        let tabs = [{ id: 'default', name: 'Default' }];
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', async function() {
+            loadSavedTheme(); // Load theme first
+            await loadTabs();
+            await loadServices();
+            createParticles();
+            setupDragAndDrop();
+        });
+
+        // API functions with caching and retry
+        const cache = new Map();
+        const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+        // Clear cache for specific URL pattern
+        function clearCacheForUrl(urlPattern) {
+            for (const [key] of cache) {
+                if (key.includes(urlPattern)) {
+                    cache.delete(key);
+                }
+            }
+        }
+
+        async function apiRequestWithRetry(url, options = {}, maxRetries = 3) {
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    return await apiRequest(url, options);
+                } catch (error) {
+                    if (attempt === maxRetries) throw error;
+                    
+                    const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    
+                    // console.log(`Retrying request (attempt ${attempt + 1}/${maxRetries}): ${url}`);
+                }
+            }
+        }
+
+        async function apiRequest(url, options = {}) {
+            try {
+                // Check cache for GET requests
+                const isGetRequest = !options.method || options.method === 'GET';
+                const cacheKey = `${url}_${JSON.stringify(options)}`;
+                
+                if (isGetRequest) {
+                    const cached = cache.get(cacheKey);
+                    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+                        return cached.data;
+                    }
+                }
+
+                // console.log('Making request to:', url);
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                // console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                // console.log('Response data:', data);
+                
+                // Cache GET requests
+                if (isGetRequest) {
+                    cache.set(cacheKey, { data, timestamp: Date.now() });
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('API request failed:', error);
+                handleApiError(error, url);
+                throw error;
+            }
+        }
+
+        function handleApiError(error, url) {
+            const errorMessages = {
+                'ECONNREFUSED': 'Cannot connect to server. Please check if the server is running.',
+                'ENOTFOUND': 'Network error. Please check your internet connection.',
+                'EACCES': 'Permission denied. Please check file permissions.',
+                'ENOENT': 'Configuration file not found.',
+                'ETIMEDOUT': 'Request timed out. Please try again.',
+                'Failed to fetch': 'Network error. Please check your connection and try again.',
+                'Access denied': 'Access denied. Your IP address is not whitelisted.',
+                'HTTP error! status: 403': 'Access denied. Your IP address is not whitelisted.',
+                'HTTP error! status: 404': 'The requested resource was not found.',
+                'HTTP error! status: 500': 'Server error. Please try again later.'
+            };
+            
+            const message = errorMessages[error.message] || 
+                           errorMessages[error.code] ||
+                           `An error occurred while communicating with server: ${error.message}`;
+            
+            showError(message);
+        }
+
+        // Load tabs from server
+        async function loadTabs() {
+            try {
+                const data = await apiRequestWithRetry('/api/tabs');
+                tabs = data.tabs || [{ id: 'default', name: 'Default' }];
+                renderTabs();
+            } catch (error) {
+                tabs = [{ id: 'default', name: 'Default' }];
+                renderTabs();
+            }
+        }
+
+        // Load services from server
+        async function loadServices() {
+            showLoading(true);
+            try {
+                // console.log('Loading services for tab:', currentTab);
+                const data = await apiRequestWithRetry(`/api/services?tab=${currentTab}`);
+                // console.log('Services data received:', data);
+                services = data.services || [];
+                // console.log('Services array set to:', services.length, 'services');
+                renderServices();
+                // console.log('Render services completed');
+            } catch (error) {
+                console.error('Error loading services:', error);
+                services = [];
+                renderServices();
+            }
+            showLoading(false);
+        }
+
+        // Save services to server
+        async function saveServicesToServer() {
+            try {
+                await apiRequestWithRetry(`/api/services?tab=${currentTab}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ services })
+                });
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        // Render services grid
+        function renderServices() {
+            // console.log('Render services called with', services.length, 'services');
+            // Clear all columns
+            for (let i = 0; i < 3; i++) {
+                const column = document.getElementById(`column${i}`);
+                column.innerHTML = '';
+            }
+
+            if (services.length === 0) {
+                document.getElementById('column1').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-network-wired"></i>
+                        <h3>No services configured</h3>
+                        <p>Add your first service to get started</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group services by column
+            services.forEach((service, index) => {
+                // console.log(`Rendering service ${index}:`, service.name, 'in column', service.column || 0);
+                const column = Math.max(0, Math.min(2, service.column || 0));
+                const card = createServiceCard(service, index);
+                document.getElementById(`column${column}`).appendChild(card);
+            });
+            // console.log('All services rendered');
+        }
+
+        // Create service card element
+        function createServiceCard(service, index) {
+            const card = document.createElement('div');
+            card.className = 'service-card';
+            card.draggable = true;
+            card.dataset.serviceIndex = index;
+            
+            card.innerHTML = `
+                <div class="service-header">
+                    <div class="service-top-row">
+                        <div class="service-title-url">
+                            <h3>${service.name}</h3>
+                            <div class="service-url">${service.url}</div>
+                        </div>
+                        <div class="service-actions">
+                            <button class="action-btn edit" onclick="editService(event, ${index})" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn move" onclick="openMoveServiceModal(event, ${index})" title="Move to Tab">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteService(event, ${index})" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                ${service.description ? `<div class="service-info"><p>${service.description}</p></div>` : ''}
+            `;
+            
+            // Add click handler for navigation (but prevent it during drag)
+            card.addEventListener('click', (e) => {
+                if (!card.classList.contains('dragging')) {
+                    // Fix URL handling - ensure proper protocol and don't double up paths
+                    let url = service.url;
+                    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                        url = 'http://' + url;
+                    }
+                    window.open(url, '_blank');
+                }
+            });
+            
+            return card;
+        }
+
+        // Setup drag and drop functionality with touch support
+        function setupDragAndDrop() {
+            // Add event listeners to columns
+            for (let i = 0; i < 3; i++) {
+                const column = document.querySelector(`.column[data-column="${i}"]`);
+                const servicesList = document.getElementById(`column${i}`);
+                
+                column.addEventListener('dragover', handleDragOver);
+                column.addEventListener('drop', handleDrop);
+                column.addEventListener('dragenter', handleDragEnter);
+                column.addEventListener('dragleave', handleDragLeave);
+                
+                // Make services list sortable within columns
+                servicesList.addEventListener('dragover', handleColumnDragOver);
+                servicesList.addEventListener('drop', handleColumnDrop);
+            }
+
+            // Add event listeners to tab navigation for tab-to-tab movement
+            const tabNavigation = document.getElementById('tabNavigation');
+            const tabsContainer = document.getElementById('tabsContainer');
+            
+            tabNavigation.addEventListener('dragover', handleTabDragOver);
+            tabNavigation.addEventListener('drop', handleTabDrop);
+            tabNavigation.addEventListener('dragenter', handleTabDragEnter);
+            tabNavigation.addEventListener('dragleave', handleTabDragLeave);
+
+            // Add event listeners to individual tab buttons
+            tabsContainer.addEventListener('dragover', handleTabButtonDragOver);
+            tabsContainer.addEventListener('drop', handleTabButtonDrop);
+            tabsContainer.addEventListener('dragenter', handleTabButtonDragEnter);
+            tabsContainer.addEventListener('dragleave', handleTabButtonDragLeave);
+
+            // Add event listeners to service cards (will be added dynamically)
+            document.addEventListener('dragstart', handleDragStart);
+            document.addEventListener('dragend', handleDragEnd);
+            
+            // Add touch support for mobile
+            document.addEventListener('touchstart', handleTouchStart, { passive: false });
+            document.addEventListener('touchmove', handleTouchMove, { passive: false });
+            document.addEventListener('touchend', handleTouchEnd, { passive: false });
+        }
+
+        // Touch support variables
+        let touchItem = null;
+        let touchOffset = { x: 0, y: 0 };
+        let touchClone = null;
+
+        function handleTouchStart(e) {
+            const touch = e.touches[0];
+            const target = e.target.closest('.service-card');
+            
+            if (!target) return;
+            
+            touchItem = target;
+            const rect = target.getBoundingClientRect();
+            touchOffset.x = touch.clientX - rect.left;
+            touchOffset.y = touch.clientY - rect.top;
+            
+            // Add dragging class to body
+            document.body.classList.add('dragging');
+            
+            // Create clone for visual feedback
+            touchClone = target.cloneNode(true);
+            touchClone.style.position = 'fixed';
+            touchClone.style.zIndex = '1000';
+            touchClone.style.opacity = '0.8';
+            touchClone.style.pointerEvents = 'none';
+            touchClone.style.transform = 'scale(1.05)';
+            document.body.appendChild(touchClone);
+            
+            target.style.opacity = '0.3';
+            e.preventDefault();
+        }
+
+        function handleTouchMove(e) {
+            if (!touchItem || !touchClone) return;
+            
+            const touch = e.touches[0];
+            touchClone.style.left = (touch.clientX - touchOffset.x) + 'px';
+            touchClone.style.top = (touch.clientY - touchOffset.y) + 'px';
+            
+            // Find drop target
+            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            const column = elementBelow?.closest('.column');
+            
+            if (column) {
+                column.classList.add('drag-over');
+            }
+            
+            // Remove drag-over from other columns
+            document.querySelectorAll('.column').forEach(col => {
+                if (col !== column) {
+                    col.classList.remove('drag-over');
+                }
+            });
+            
+            e.preventDefault();
+        }
+
+        function handleTouchEnd(e) {
+            if (!touchItem || !touchClone) return;
+            
+            const touch = e.changedTouches[0];
+            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            const column = elementBelow?.closest('.column');
+            const servicesList = column?.querySelector('.services-list');
+            
+            if (servicesList) {
+                const serviceIndex = parseInt(touchItem.dataset.serviceIndex);
+                const draggedServiceData = services[serviceIndex];
+                const newColumn = parseInt(column.dataset.column);
+                
+                // Remove from original position
+                services.splice(serviceIndex, 1);
+                
+                // Add to new position
+                draggedServiceData.column = newColumn;
+                services.push(draggedServiceData);
+                
+                // Save and re-render
+                saveServicesToServer().then(() => {
+                    renderServices();
+                }).catch(() => {
+                    loadServices();
+                });
+            }
+            
+            // Cleanup
+            document.body.removeChild(touchClone);
+            touchItem.style.opacity = '';
+            document.querySelectorAll('.column').forEach(col => {
+                col.classList.remove('drag-over');
+            });
+            
+            // Remove dragging class from body
+            document.body.classList.remove('dragging');
+            
+            touchItem = null;
+            touchClone = null;
+        }
+
+        function handleColumnDragOver(e) {
+            e.preventDefault();
+            if (!draggedService) return;
+
+            const servicesList = e.currentTarget;
+            const afterElement = getDragAfterElement(servicesList, e.clientY);
+            
+            // Only move if it's a different position
+            const currentParent = draggedService.parentNode;
+            if (currentParent !== servicesList || 
+                (afterElement && draggedService.nextSibling !== afterElement) ||
+                (!afterElement && draggedService.nextSibling !== null)) {
+                
+                if (afterElement == null) {
+                    servicesList.appendChild(draggedService);
+                } else {
+                    servicesList.insertBefore(draggedService, afterElement);
+                }
+            }
+        }
+
+        function handleColumnDrop(e) {
+            e.preventDefault();
+            if (!draggedService) return;
+            
+            const servicesList = e.currentTarget;
+            const column = servicesList.closest('.column');
+            const newColumn = parseInt(column.dataset.column);
+            const serviceIndex = parseInt(draggedService.dataset.serviceIndex);
+            
+            // Get the dragged service
+            const draggedServiceData = services[serviceIndex];
+            
+            // Remove from original position
+            services.splice(serviceIndex, 1);
+            
+            // Get new position within column
+            const cardsInColumn = [...servicesList.children];
+            const newPosition = cardsInColumn.indexOf(draggedService);
+            
+            // Find correct insertion point in the services array
+            let insertIndex = 0;
+            for (let i = 0; i < services.length; i++) {
+                if (services[i].column === newColumn) {
+                    const cardsBefore = cardsInColumn.slice(0, newPosition);
+                    const matchingCards = cardsBefore.filter(card => {
+                        const cardIndex = parseInt(card.dataset.serviceIndex);
+                        return services.findIndex(s => s === services[cardIndex]) < i;
+                    });
+                    
+                    if (matchingCards.length === newPosition) {
+                        insertIndex = i;
+                        break;
+                    }
+                    insertIndex = i + 1;
+                }
+            }
+            
+            // Insert at new position
+            draggedServiceData.column = newColumn;
+            services.splice(insertIndex, 0, draggedServiceData);
+            
+            // Save to server and re-render
+            saveServicesToServer().then(() => {
+                renderServices();
+            }).catch(() => {
+                loadServices(); // Reload on error
+            });
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.service-card:not(.dragging)')];
+            
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function reorderServicesArray() {
+            // Simple and clean reordering based on visual layout
+            const newServices = [];
+            
+            // Collect services in their new visual order from each column
+            for (let col = 0; col < 3; col++) {
+                const columnElement = document.getElementById(`column${col}`);
+                const cards = [...columnElement.querySelectorAll('.service-card')];
+                
+                cards.forEach(card => {
+                    const originalIndex = parseInt(card.dataset.serviceIndex);
+                    if (originalIndex >= 0 && originalIndex < services.length) {
+                        const service = { ...services[originalIndex] };
+                        service.column = col;
+                        newServices.push(service);
+                    }
+                });
+            }
+            
+            services = newServices;
+        }
+
+        function handleDragStart(e) {
+            if (!e.target.classList.contains('service-card')) return;
+            
+            draggedService = e.target;
+            e.target.classList.add('dragging');
+            document.body.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            if (!e.target.classList.contains('service-card')) return;
+            
+            e.target.classList.remove('dragging');
+            document.body.classList.remove('dragging');
+            draggedService = null;
+            
+            // Remove drag-over class from all columns
+            document.querySelectorAll('.column').forEach(col => {
+                col.classList.remove('drag-over');
+            });
+            
+            // Remove drag-over class from all tabs and tab navigation
+            document.querySelectorAll('.tab-btn').forEach(tab => {
+                tab.classList.remove('drag-over');
+            });
+            document.querySelectorAll('#tabNavigation').forEach(nav => {
+                nav.classList.remove('drag-over');
+            });
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDragEnter(e) {
+            if (e.target.closest('.column')) {
+                e.target.closest('.column').classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            const column = e.target.closest('.column');
+            if (column && !column.contains(e.relatedTarget)) {
+                column.classList.remove('drag-over');
+            }
+        }
+
+        async function handleDrop(e) {
+            e.preventDefault();
+            
+            const column = e.target.closest('.column');
+            if (!column || !draggedService) return;
+            
+            const newColumn = parseInt(column.dataset.column);
+            const serviceIndex = parseInt(draggedService.dataset.serviceIndex);
+            
+            // Get the dragged service
+            const draggedServiceData = services[serviceIndex];
+            
+            // Remove from original position
+            services.splice(serviceIndex, 1);
+            
+            // Add to end of new column
+            draggedServiceData.column = newColumn;
+            services.push(draggedServiceData);
+            
+            // Save to server and re-render
+            try {
+                await saveServicesToServer();
+                renderServices();
+            } catch (error) {
+                // Revert on error
+                loadServices();
+            }
+            
+            column.classList.remove('drag-over');
+        }
+
+        // Tab drag and drop handlers
+        function handleTabDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleTabDragEnter(e) {
+            const tabNav = e.target.closest('#tabNavigation');
+            if (tabNav) {
+                tabNav.classList.add('drag-over');
+            }
+        }
+
+        function handleTabDragLeave(e) {
+            const tabNav = e.target.closest('#tabNavigation');
+            if (tabNav && !tabNav.contains(e.relatedTarget)) {
+                tabNav.classList.remove('drag-over');
+            }
+        }
+
+        function handleTabDrop(e) {
+            e.preventDefault();
+            const tabNav = e.target.closest('#tabNavigation');
+            if (tabNav) {
+                tabNav.classList.remove('drag-over');
+            }
+        }
+
+        function handleTabButtonDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleTabButtonDragEnter(e) {
+            const tabButton = e.target.closest('.tab-btn');
+            if (tabButton && !tabButton.classList.contains('active')) {
+                tabButton.classList.add('drag-over');
+            }
+        }
+
+        function handleTabButtonDragLeave(e) {
+            const tabButton = e.target.closest('.tab-btn');
+            if (tabButton && !tabButton.contains(e.relatedTarget)) {
+                tabButton.classList.remove('drag-over');
+            }
+        }
+
+        async function handleTabButtonDrop(e) {
+            e.preventDefault();
+            
+            const tabButton = e.target.closest('.tab-btn');
+            if (!tabButton || !draggedService) return;
+            
+            const targetTabId = tabButton.dataset.tab;
+            const serviceName = draggedService.querySelector('.service-title-url h3').textContent;
+            
+            // Find the actual index of the service in the current services array
+            const serviceIndex = services.findIndex(s => s.name === serviceName);
+            
+            if (serviceIndex === -1) {
+                showError('Service not found in current tab');
+                tabButton.classList.remove('drag-over');
+                return;
+            }
+            
+            // Don't allow dropping on current tab
+            if (targetTabId === currentTab) {
+                tabButton.classList.remove('drag-over');
+                return;
+            }
+            
+            // Immediately remove the dragged service from DOM for instant feedback
+            const draggedElement = draggedService;
+            draggedElement.style.opacity = '0.5';
+            draggedElement.style.pointerEvents = 'none';
+            
+            try {
+                // console.log('Moving service:', {
+                //     serviceIndex,
+                //     serviceName,
+                //     fromTab: currentTab,
+                //     toTab: targetTabId,
+                //     totalServices: services.length
+                // });
+                
+                const response = await fetch(`/api/services/${serviceIndex}/move`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fromTab: currentTab,
+                        toTab: targetTabId
+                    })
+                });
+                
+                const result = await response.json();
+                // console.log('Move result:', result);
+                
+                if (result.success) {
+                    // Get target tab name for user feedback
+                    const targetTabName = tabs.find(t => t.id === targetTabId)?.name;
+                    showSuccess(`Service moved to "${targetTabName}" tab. Switch to that tab to see it.`);
+                    
+                    // Clean up drag state
+                    if (draggedElement) {
+                        draggedElement.classList.remove('dragging');
+                    }
+                    draggedService = null;
+                    
+                    // Remove drag-over classes
+                    document.querySelectorAll('.column').forEach(col => {
+                        col.classList.remove('drag-over');
+                    });
+                    document.querySelectorAll('.tab-btn').forEach(tab => {
+                        tab.classList.remove('drag-over');
+                    });
+                    document.querySelectorAll('#tabNavigation').forEach(nav => {
+                        nav.classList.remove('drag-over');
+                    });
+                    
+                    // Clear cache for both source and destination tabs to force fresh data
+                    clearCacheForUrl(`/api/services?tab=${currentTab}`);
+                    clearCacheForUrl(`/api/services?tab=${targetTabId}`);
+                    
+                    // Reload current tab to show updated services
+                    // console.log('Reloading services for current tab:', currentTab);
+                    await loadServices();
+                    // console.log('Services reloaded, new count:', services.length);
+                } else {
+                    // Restore element if move failed
+                    draggedElement.style.opacity = '1';
+                    draggedElement.style.pointerEvents = 'auto';
+                    showError(result.error || 'Failed to move service');
+                }
+            } catch (error) {
+                // Restore the element if there was an error
+                draggedElement.style.opacity = '1';
+                draggedElement.style.pointerEvents = 'auto';
+                showError('Error moving service: ' + error.message);
+            }
+            
+            tabButton.classList.remove('drag-over');
+        }
+
+        // Show add service modal
+        function showAddModal() {
+            editingIndex = -1;
+            document.getElementById('modalTitle').textContent = 'Add Service';
+            document.getElementById('serviceName').value = '';
+            document.getElementById('serviceDescription').value = '';
+            document.getElementById('serviceUrl').value = '';
+            document.getElementById('serviceColumn').value = '0';
+            document.getElementById('serviceModal').classList.add('show');
+        }
+
+        // Edit service
+        function editService(event, index) {
+            event.stopPropagation();
+            editingIndex = index;
+            const service = services[index];
+            document.getElementById('modalTitle').textContent = 'Edit Service';
+            document.getElementById('serviceName').value = service.name;
+            document.getElementById('serviceDescription').value = service.description;
+            document.getElementById('serviceUrl').value = service.url;
+            document.getElementById('serviceColumn').value = service.column || 0;
+            document.getElementById('serviceModal').classList.add('show');
+        }
+
+        // Delete service
+        async function deleteService(event, index) {
+            event.stopPropagation();
+            if (confirm('Are you sure you want to delete this service?')) {
+                services.splice(index, 1);
+                try {
+                    await saveServicesToServer();
+                    renderServices();
+                } catch (error) {
+                    loadServices(); // Reload on error
+                }
+            }
+        }
+
+        // Save service (add or edit)
+        async function saveService() {
+            const name = document.getElementById('serviceName').value.trim();
+            const description = document.getElementById('serviceDescription').value.trim();
+            const url = document.getElementById('serviceUrl').value.trim();
+            const column = parseInt(document.getElementById('serviceColumn').value);
+
+            // Validate input
+            const errors = validateServiceInput(name, description, url);
+            if (errors.length > 0) {
+                alert('Please fix the following errors:\n\n' + errors.join('\n'));
+                return;
+            }
+
+            const service = { name, description, url, column };
+
+            if (editingIndex >= 0) {
+                services[editingIndex] = service;
+            } else {
+                services.push(service);
+            }
+
+            try {
+                await saveServicesToServer();
+                renderServices();
+                hideModal();
+            } catch (error) {
+                // Error already shown by saveServicesToServer
+            }
+        }
+
+        // Input validation function
+        function validateServiceInput(name, description, url) {
+            const errors = [];
+            
+            if (!name || name.trim().length < 2) {
+                errors.push('• Service name must be at least 2 characters long');
+            }
+            
+            if (name.length > 50) {
+                errors.push('• Service name must be less than 50 characters');
+            }
+            
+            if (!url || url.trim().length < 3) {
+                errors.push('• URL is required and must be at least 3 characters long');
+            }
+            
+            // Validate URL format
+            try {
+                const testUrl = url.startsWith('http') ? url : `http://${url}`;
+                new URL(testUrl);
+            } catch {
+                errors.push('• Please enter a valid URL (include http:// or https://)');
+            }
+            
+            if (description && description.length > 200) {
+                errors.push('• Description must be less than 200 characters');
+            }
+            
+            return errors;
+        }
+
+        // Hide modal
+        function hideModal() {
+            document.getElementById('serviceModal').classList.remove('show');
+        }
+
+        // Hide export modal
+        function hideExportModal() {
+            document.getElementById('exportModal').classList.remove('show');
+        }
+
+        // Hide import modal
+        function hideImportModal() {
+            document.getElementById('importModal').classList.remove('show');
+        }
+
+        // Move service modal functions
+        let movingServiceIndex = null;
+
+        function openMoveServiceModal(event, serviceIndex) {
+            event.stopPropagation();
+            movingServiceIndex = serviceIndex;
+            
+            // Clear previous options
+            const select = document.getElementById('moveToTabSelect');
+            select.innerHTML = '<option value="">Choose a tab...</option>';
+            
+            // Add all tabs except current tab
+            tabs.forEach(tab => {
+                if (tab.id !== currentTab) {
+                    const option = document.createElement('option');
+                    option.value = tab.id;
+                    option.textContent = tab.name;
+                    select.appendChild(option);
+                }
+            });
+            
+            document.getElementById('moveServiceModal').classList.add('show');
+        }
+
+        function hideMoveServiceModal() {
+            document.getElementById('moveServiceModal').classList.remove('show');
+            movingServiceIndex = null;
+        }
+
+        async function moveService() {
+            const selectedTab = document.getElementById('moveToTabSelect').value;
+            
+            if (!selectedTab) {
+                showError('Please select a destination tab');
+                return;
+            }
+            
+            if (movingServiceIndex === null) {
+                showError('No service selected for moving');
+                return;
+            }
+            
+            // Verify the service still exists in the current services array
+            if (movingServiceIndex < 0 || movingServiceIndex >= services.length) {
+                showError('Service no longer exists in current tab');
+                hideMoveServiceModal();
+                return;
+            }
+            
+            // Find and fade out the service card being moved
+            const serviceCards = document.querySelectorAll('.service-card');
+            const movingCard = serviceCards[movingServiceIndex];
+            if (movingCard) {
+                movingCard.style.opacity = '0.5';
+                movingCard.style.pointerEvents = 'none';
+            }
+            
+            try {
+                const response = await fetch(`/api/services/${movingServiceIndex}/move`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fromTab: currentTab,
+                        toTab: selectedTab
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    hideMoveServiceModal();
+                    
+                    // If destination tab is loaded elsewhere, user may need to switch tabs to see the moved service
+                    const destTabName = tabs.find(t => t.id === selectedTab)?.name;
+                    showSuccess(`Service moved to "${destTabName}" tab. Switch to that tab to see it.`);
+                    
+                    // Clear cache for both source and destination tabs to force fresh data
+                    clearCacheForUrl(`/api/services?tab=${currentTab}`);
+                    clearCacheForUrl(`/api/services?tab=${selectedTab}`);
+                    
+                    // Reload current tab to show updated services
+                    await loadServices();
+                } else {
+                    // Restore the card if move failed
+                    if (movingCard) {
+                        movingCard.style.opacity = '1';
+                        movingCard.style.pointerEvents = 'auto';
+                    }
+                    showError(result.error || 'Failed to move service');
+                }
+            } catch (error) {
+                // Restore the card if there was an error
+                if (movingCard) {
+                    movingCard.style.opacity = '1';
+                    movingCard.style.pointerEvents = 'auto';
+                }
+                showError('Error moving service: ' + error.message);
+            }
+        }
+
+        // Export/Import modal functions
+        function showExportOptions() {
+            document.getElementById('currentTabName').textContent = tabs.find(t => t.id === currentTab)?.name || 'Default';
+            document.getElementById('exportModal').classList.add('show');
+        }
+
+        function hideExportModal() {
+            document.getElementById('exportModal').classList.remove('show');
+        }
+
+        function showImportOptions() {
+            document.getElementById('importCurrentTabName').textContent = tabs.find(t => t.id === currentTab)?.name || 'Default';
+            document.getElementById('importModal').classList.add('show');
+        }
+
+        function hideImportModal() {
+            document.getElementById('importModal').classList.remove('show');
+        }
+
+        // Export services
+        async function performExport() {
+            const exportOption = document.querySelector('input[name="exportOption"]:checked').value;
+            
+            try {
+                if (exportOption === 'current') {
+                    // Export current tab only
+                    const filename = `homelab-services-${currentTab}.json`;
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/api/export/download';
+                    form.style.display = 'none';
+                    
+                    const dataInput = document.createElement('input');
+                    dataInput.type = 'hidden';
+                    dataInput.name = 'data';
+                    dataInput.value = JSON.stringify(services);
+                    
+                    const filenameInput = document.createElement('input');
+                    filenameInput.type = 'hidden';
+                    filenameInput.name = 'filename';
+                    filenameInput.value = filename;
+                    
+                    form.appendChild(dataInput);
+                    form.appendChild(filenameInput);
+                    document.body.appendChild(form);
+                    form.submit();
+                    document.body.removeChild(form);
+                } else {
+                    // Export all tabs
+                    const allData = await apiRequest('/api/export/all');
+                    const filename = 'homelab-dashboard-full.json';
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/api/export/download';
+                    form.style.display = 'none';
+                    
+                    const dataInput = document.createElement('input');
+                    dataInput.type = 'hidden';
+                    dataInput.name = 'data';
+                    dataInput.value = JSON.stringify(allData);
+                    
+                    const filenameInput = document.createElement('input');
+                    filenameInput.type = 'hidden';
+                    filenameInput.name = 'filename';
+                    filenameInput.value = filename;
+                    
+                    form.appendChild(dataInput);
+                    form.appendChild(filenameInput);
+                    document.body.appendChild(form);
+                    form.submit();
+                    document.body.removeChild(form);
+                }
+                hideExportModal();
+            } catch (error) {
+                showError('Failed to export: ' + error.message);
+            }
+        }
+
+        // Import services
+        async function performImport() {
+            const importOption = document.querySelector('input[name="importOption"]:checked').value;
+            
+            if (importOption === 'current') {
+                // Import to current tab only
+                hideImportModal();
+                document.getElementById('fileInput').click();
+            } else {
+                // Import all tabs
+                hideImportModal();
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                input.onchange = async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = async function(e) {
+                        try {
+                            const imported = JSON.parse(e.target.result);
+                            if (imported.tabs && imported.services) {
+                                await apiRequest('/api/import/all', {
+                                    method: 'POST',
+                                    body: JSON.stringify(imported)
+                                });
+                                await loadTabs();
+                                await loadServices();
+                                alert('Dashboard imported successfully!');
+                            } else {
+                                alert('Invalid file format. Please select a valid dashboard export file.');
+                            }
+                        } catch (error) {
+                            alert('Error reading file. Please select a valid JSON file.');
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+                input.click();
+            }
+        }
+
+        // Legacy functions for backward compatibility
+        async function exportServices() {
+            showExportOptions();
+        }
+
+        function importServices() {
+            showImportOptions();
+        }
+
+        // Handle import file
+        async function handleImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        services = imported.map(service => ({
+                            ...service,
+                            column: service.column || 0
+                        }));
+                        await saveServicesToServer();
+                        renderServices();
+                        alert('Services imported successfully!');
+                    } else {
+                        alert('Invalid file format. Please select a valid JSON file.');
+                    }
+                } catch (error) {
+                    alert('Error reading file. Please select a valid JSON file.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Utility functions
+        function showLoading(show) {
+            document.getElementById('loadingState').style.display = show ? 'block' : 'none';
+        }
+
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icon = type === 'error' ? 'fa-exclamation-triangle' : 'fa-check-circle';
+            toast.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <div class="toast-message">${message}</div>
+            `;
+            
+            // Add to container
+            toastContainer.appendChild(toast);
+            
+            // Trigger animation
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        function showError(message) {
+            showToast(message, 'error');
+        }
+
+        function showSuccess(message) {
+            showToast(message, 'success');
+        }
+
+        // Tab management functions
+        function renderTabs() {
+            const container = document.getElementById('tabsContainer');
+            container.innerHTML = '';
+            
+            tabs.forEach(tab => {
+                const tabBtn = document.createElement('button');
+                tabBtn.className = `tab-btn ${tab.id === currentTab ? 'active' : ''}`;
+                tabBtn.dataset.tab = tab.id;
+                tabBtn.onclick = () => switchTab(tab.id);
+                tabBtn.oncontextmenu = (e) => showTabContextMenu(e, tab.id);
+                
+                const tabName = document.createElement('span');
+                tabName.className = 'tab-name';
+                tabName.textContent = tab.name;
+                tabName.contentEditable = false;
+                tabName.onblur = () => renameTab(tab.id, tabName.textContent);
+                tabName.onkeydown = (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        tabName.blur();
+                    }
+                };
+                
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'tab-close';
+                closeBtn.innerHTML = '×';
+                closeBtn.onclick = (e) => deleteTab(e, tab.id);
+                closeBtn.style.display = tab.id === 'default' ? 'none' : 'flex';
+                
+                tabBtn.appendChild(tabName);
+                tabBtn.appendChild(closeBtn);
+                container.appendChild(tabBtn);
+            });
+        }
+
+        async function switchTab(tabId) {
+            if (tabId === currentTab) return;
+            
+            currentTab = tabId;
+            renderTabs();
+            await loadServices();
+        }
+
+        async function addNewTab() {
+            const tabName = prompt('Enter tab name:');
+            if (!tabName || !tabName.trim()) return;
+            
+            const tabId = 'tab_' + Date.now();
+            const newTab = { id: tabId, name: tabName.trim() };
+            
+            try {
+                await apiRequest('/api/tabs', {
+                    method: 'POST',
+                    body: JSON.stringify({ tab: newTab })
+                });
+                
+                tabs.push(newTab);
+                renderTabs();
+                await switchTab(tabId);
+            } catch (error) {
+                showError('Failed to create tab');
+            }
+        }
+
+        async function renameTab(tabId, newName) {
+            if (!newName || !newName.trim()) {
+                renderTabs();
+                return;
+            }
+            
+            const tab = tabs.find(t => t.id === tabId);
+            if (!tab || tab.name === newName.trim()) return;
+            
+            try {
+                await apiRequest(`/api/tabs/${tabId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ name: newName.trim() })
+                });
+                
+                tab.name = newName.trim();
+                renderTabs();
+                showSuccess(`Tab renamed to "${newName.trim()}"`);
+            } catch (error) {
+                showError('Failed to rename tab');
+                renderTabs();
+            }
+        }
+
+        async function deleteTab(event, tabId) {
+            event.stopPropagation();
+            
+            if (tabId === 'default') return;
+            
+            if (!confirm(`Are you sure you want to delete the "${tabs.find(t => t.id === tabId)?.name}" tab? This will also delete all services in this tab.`)) {
+                return;
+            }
+            
+            try {
+                await apiRequest(`/api/tabs/${tabId}`, {
+                    method: 'DELETE'
+                });
+                
+                tabs = tabs.filter(t => t.id !== tabId);
+                
+                if (currentTab === tabId) {
+                    await switchTab('default');
+                } else {
+                    renderTabs();
+                }
+            } catch (error) {
+                showError('Failed to delete tab');
+            }
+        }
+
+        // Create floating particles
+        function createParticles() {
+            const container = document.querySelector('.floating-particles');
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Menu toggle functionality
+        function toggleMenu() {
+            const menu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('menuOverlay');
+            const fab = document.getElementById('fabButton');
+            
+            menu.classList.toggle('open');
+            overlay.classList.toggle('show');
+            
+            // Rotate FAB icon
+            const icon = fab.querySelector('i');
+            if (menu.classList.contains('open')) {
+                icon.className = 'fas fa-times';
+            } else {
+                icon.className = 'fas fa-bars';
+            }
+        }
+
+        // Close menu when pressing Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('sideMenu');
+                if (menu.classList.contains('open')) {
+                    toggleMenu();
+                }
+            }
+        });
+
+        // Additional menu functions
+        function renameCurrentTab() {
+            const currentTabData = tabs.find(t => t.id === currentTab);
+            if (!currentTabData) return;
+            
+            const newName = prompt('Enter new tab name:', currentTabData.name);
+            if (!newName || !newName.trim() || newName.trim() === currentTabData.name) {
+                return;
+            }
+            
+            renameTab(currentTab, newName.trim());
+        }
+
+        async function createBackup() {
+            try {
+                const response = await apiRequest('/api/backup', {
+                    method: 'POST'
+                });
+                
+                if (response.success) {
+                    showSuccess(`Backup created successfully! ${response.includes_tabs} tabs and ${response.includes_services} services backed up.`);
+                    // console.log('Backup created:', response.backup_file);
+                    
+                    // Clear ALL cache entries to ensure fresh data
+                    cache.clear();
+                    
+                    // Immediately show backups without delay
+                    viewBackups();
+                } else {
+                    showError('Failed to create backup');
+                }
+            } catch (error) {
+                console.error('Error creating backup:', error);
+                showError('Failed to create backup');
+            }
+        }
+
+        async function viewBackups() {
+            try {
+                // Force a completely fresh request with cache busting
+                const response = await fetch('/api/backups?t=' + Date.now(), {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                // console.log('Backups response:', data);
+                
+                // Always clear existing modal first
+                hideBackupModal();
+                
+                if (data.success && data.backups.length > 0) {
+                    showBackupModal(data.backups);
+                } else {
+                    showNoBackupsModal();
+                }
+            } catch (error) {
+                console.error('Error loading backups:', error);
+                showError('Failed to load backups');
+            }
+        }
+
+        function showNoBackupsModal() {
+            // Remove any existing backup modal first
+            hideBackupModal();
+            
+            // Create new modal
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.id = 'backupModal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h2>Backup Management</h2>
+                    <div class="empty-state">
+                        <i class="fas fa-archive"></i>
+                        <h3>No backups created</h3>
+                        <p>Create your first backup to save your current tabs and services configuration.</p>
+                        <button class="btn btn-primary" onclick="hideBackupModal(); createBackup();">
+                            <i class="fas fa-plus"></i> Create First Backup
+                        </button>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn btn-secondary" onclick="hideBackupModal()">Close</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Show modal with animation
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    hideBackupModal();
+                }
+            });
+        }
+
+        function showBackupModal(backups) {
+            // Remove any existing backup modal first
+            hideBackupModal();
+            
+            // Create new modal
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.id = 'backupModal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h2>Backup Management</h2>
+                    <div class="backup-list">
+                        ${backups.map(backup => `
+                            <div class="backup-item">
+                                <div class="backup-info">
+                                    <div class="backup-name" id="backup-name-${backup.filename}">${backup.filename}</div>
+                                    <div class="backup-comment" id="backup-comment-${backup.filename}">${backup.comment || 'No comment'}</div>
+                                    <div class="backup-details">
+                                        <span><i class="fas fa-calendar"></i> ${new Date(backup.created).toLocaleString()}</span>
+                                        <span><i class="fas fa-database"></i> ${backup.includes_tabs} tabs, ${backup.includes_services} services</span>
+                                        <span><i class="fas fa-file"></i> ${(backup.size / 1024).toFixed(1)} KB</span>
+                                        ${backup.service_urls && backup.service_urls.length > 0 ? `
+                                            <span><i class="fas fa-link"></i> ${backup.service_urls.length} service URLs</span>
+                                        ` : ''}
+                                    </div>
+                                    ${backup.service_urls && backup.service_urls.length > 0 ? `
+                                        <div class="backup-urls">
+                                            ${backup.service_urls.slice(0, 3).map(url => `
+                                                <div>
+                                                    <strong>${url.name}:</strong> <span style="font-family: monospace; color: #667eea;">${url.url}</span>
+                                                    ${url.tab ? `<span style="opacity: 0.7;"> (${url.tab})</span>` : ''}
+                                                </div>
+                                            `).join('')}
+                                            ${backup.service_urls.length > 3 ? `<div style="opacity: 0.7;">... and ${backup.service_urls.length - 3} more</div>` : ''}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <div class="backup-actions">
+                                    <button class="btn btn-primary" onclick="restoreBackup('${backup.filename}')">
+                                        <i class="fas fa-undo"></i> Restore
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="downloadBackup('${backup.filename}')">
+                                        <i class="fas fa-download"></i> Download
+                                    </button>
+                                    <button class="btn btn-warning" onclick="editBackupInfo('${backup.filename}')">
+                                        <i class="fas fa-comment"></i> Comment
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="renameBackup('${backup.filename}')">
+                                        <i class="fas fa-i-cursor"></i> Rename
+                                    </button>
+                                    <button class="btn btn-danger" onclick="deleteBackup('${backup.filename}')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn btn-secondary" onclick="hideBackupModal()">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Add event listener to close on outside click
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    hideBackupModal();
+                }
+            });
+            
+            // Show modal with a small delay to ensure DOM is ready
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+        }
+
+        function hideBackupModal() {
+            const modal = document.getElementById('backupModal');
+            if (modal) {
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    if (modal.parentNode) {
+                        modal.parentNode.removeChild(modal);
+                    }
+                }, 300);
+            }
+        }
+
+        async function restoreBackup(filename) {
+            if (!confirm(`Are you sure you want to restore from backup "${filename}"? This will replace all current tabs and services.`)) {
+                return;
+            }
+            
+            try {
+                const response = await apiRequest(`/api/restore/${filename}`, {
+                    method: 'POST'
+                });
+                
+                if (response.success) {
+                    showSuccess(`Backup restored successfully! ${response.restored_tabs} tabs and ${response.restored_services} services restored.`);
+                    hideBackupModal();
+                    await loadTabs();
+                    await loadServices();
+                } else {
+                    showError(response.error || 'Failed to restore backup');
+                }
+            } catch (error) {
+                showError('Failed to restore backup');
+            }
+        }
+
+        function downloadBackup(filename) {
+            // Create a temporary link element to trigger download
+            const link = document.createElement('a');
+            link.href = `/api/download/${filename}`;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showSuccess(`Downloading backup: ${filename}`);
+        }
+
+        async function editBackupInfo(filename) {
+            const currentComment = document.getElementById(`backup-comment-${filename}`).textContent;
+            const newComment = prompt('Enter backup comment (optional):', currentComment === 'No comment' ? '' : currentComment);
+            
+            if (newComment === null) return; // User cancelled
+            
+            try {
+                const response = await apiRequest(`/api/backup/${filename}/comment`, {
+                    method: 'POST',
+                    body: JSON.stringify({ comment: newComment.trim() })
+                });
+                
+                if (response.success) {
+                    // Update the comment display
+                    const commentElement = document.getElementById(`backup-comment-${filename}`);
+                    commentElement.textContent = newComment.trim() || '';
+                    showSuccess('Backup comment updated');
+                } else {
+                    showError(response.error || 'Failed to update backup comment');
+                }
+            } catch (error) {
+                showError('Failed to update backup comment');
+            }
+        }
+
+        async function renameBackup(filename) {
+            const currentName = filename.replace('.json', '');
+            const newName = prompt('Enter new backup name:', currentName);
+            
+            if (newName === null || newName.trim() === '' || newName.trim() === currentName) {
+                return; // User cancelled or didn't change the name
+            }
+            
+            // Ensure the name starts with homelab_backup_
+            let finalNewName = newName.trim();
+            if (!finalNewName.startsWith('homelab_backup_')) {
+                finalNewName = 'homelab_backup_' + finalNewName;
+            }
+            
+            // Ensure it ends with .json
+            if (!finalNewName.endsWith('.json')) {
+                finalNewName = finalNewName + '.json';
+            }
+            
+            try {
+                const response = await apiRequest(`/api/backup/${filename}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ newFilename: finalNewName })
+                });
+                
+                if (response.success) {
+                    showSuccess(`Backup renamed to "${finalNewName}"`);
+                    // Refresh the backup list
+                    viewBackups();
+                } else {
+                    showError(response.error || 'Failed to rename backup');
+                }
+            } catch (error) {
+                showError('Failed to rename backup');
+            }
+        }
+
+        async function deleteBackup(filename) {
+            if (!confirm(`Are you sure you want to delete backup "${filename}"? This action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await apiRequest(`/api/backup/${filename}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.success) {
+                    showSuccess('Backup deleted successfully');
+                    // Clear cache for backups to ensure fresh data
+                    clearCacheForUrl('/api/backups');
+                    // Refresh the backup list
+                    viewBackups();
+                } else {
+                    showError(response.error || 'Failed to delete backup');
+                }
+            } catch (error) {
+                console.error('Error deleting backup:', error);
+                showError('Failed to delete backup');
+            }
+        }
+
+        // Debug function to check files
+        async function debugFiles() {
+            try {
+                const response = await apiRequest('/api/debug/files');
+                // console.log('All files on server:', response.files);
+                // console.log('Current directory:', response.current_directory);
+            } catch (error) {
+                console.error('Failed to debug files:', error);
+            }
+        }
+
+        // Context menu functions
+        let currentContextTab = null;
+
+        function showTabContextMenu(event, tabId) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            currentContextTab = tabId;
+            const contextMenu = document.getElementById('tabContextMenu');
+            
+            // Position the menu
+            contextMenu.style.left = event.pageX + 'px';
+            contextMenu.style.top = event.pageY + 'px';
+            contextMenu.classList.add('show');
+            
+            // Hide menu when clicking elsewhere
+            setTimeout(() => {
+                document.addEventListener('click', hideTabContextMenu);
+            }, 100);
+        }
+
+        function hideTabContextMenu() {
+            const contextMenu = document.getElementById('tabContextMenu');
+            contextMenu.classList.remove('show');
+            document.removeEventListener('click', hideTabContextMenu);
+            currentContextTab = null;
+        }
+
+        function renameTabFromContext() {
+            if (!currentContextTab) return;
+            
+            const tab = tabs.find(t => t.id === currentContextTab);
+            if (!tab) return;
+            
+            const newName = prompt('Enter new tab name:', tab.name);
+            if (!newName || !newName.trim() || newName.trim() === tab.name) {
+                hideTabContextMenu();
+                return;
+            }
+            
+            renameTab(currentContextTab, newName.trim());
+            hideTabContextMenu();
+        }
+
+        function deleteTabFromContext() {
+            if (!currentContextTab) return;
+            
+            deleteTab(event, currentContextTab);
+            hideTabContextMenu();
+        }
+
+        // Theme management
+        function changeTheme(themeName) {
+            // Remove existing theme classes
+            document.documentElement.classList.remove('theme-dark', 'theme-light', 'theme-blue', 'theme-purple', 'theme-green', 'theme-orange', 'theme-red', 'theme-teal');
+            
+            // Add new theme class
+            document.documentElement.classList.add(`theme-${themeName}`);
+            
+            // Save theme preference
+            localStorage.setItem('selectedTheme', themeName);
+            
+            // Apply theme-specific styles
+            applyThemeStyles(themeName);
+            
+            showSuccess(`Theme changed to ${themeName}`);
+        }
+
+        function applyThemeStyles(themeName) {
+            const htmlElement = document.documentElement;
+            const fab = document.getElementById('fabButton');
+            
+            switch(themeName) {
+                case 'light':
+                    htmlElement.style.setProperty('--bg-gradient', 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)');
+                    htmlElement.style.setProperty('--text-color', '#1e293b');
+                    htmlElement.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.7)');
+                    htmlElement.style.setProperty('--border-color', 'rgba(0, 0, 0, 0.15)');
+                    htmlElement.style.setProperty('--accent-color', '#4f46e5');
+                    if (fab) fab.style.background = 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)';
+                    break;
+                case 'blue':
+                    htmlElement.style.setProperty('--bg-gradient', 'linear-gradient(135deg, #0c4a6e 0%, #075985 50%, #0c7489 100%)');
+                    htmlElement.style.setProperty('--text-color', '#e0f2fe');
+                    htmlElement.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.08)');
+                    htmlElement.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.15)');
+                    htmlElement.style.setProperty('--accent-color', '#38bdf8');
+                    if (fab) fab.style.background = 'linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%)';
+                    break;
+                case 'purple':
+                    htmlElement.style.setProperty('--bg-gradient', 'linear-gradient(135deg, #581c87 0%, #6b21a8 50%, #7c3aed 100%)');
+                    htmlElement.style.setProperty('--text-color', '#f3e8ff');
+                    htmlElement.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.08)');
+                    htmlElement.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.15)');
+                    htmlElement.style.setProperty('--accent-color', '#c084fc');
+                    if (fab) fab.style.background = 'linear-gradient(135deg, #c084fc 0%, #a855f7 100%)';
+                    break;
+                case 'green':
+                    htmlElement.style.setProperty('--bg-gradient', 'linear-gradient(135deg, #14532d 0%, #166534 50%, #15803d 100%)');
+                    htmlElement.style.setProperty('--text-color', '#dcfce7');
+                    htmlElement.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.08)');
+                    htmlElement.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.15)');
+                    htmlElement.style.setProperty('--accent-color', '#4ade80');
+                    if (fab) fab.style.background = 'linear-gradient(135deg, #4ade80 0%, #22c55e 100%)';
+                    break;
+                case 'orange':
+                    htmlElement.style.setProperty('--bg-gradient', 'linear-gradient(135deg, #7c2d12 0%, #c2410c 50%, #ea580c 100%)');
+                    htmlElement.style.setProperty('--text-color', '#fed7aa');
+                    htmlElement.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.08)');
+                    htmlElement.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.15)');
+                    htmlElement.style.setProperty('--accent-color', '#fb923c');
+                    if (fab) fab.style.background = 'linear-gradient(135deg, #fb923c 0%, #f97316 100%)';
+                    break;
+                case 'red':
+                    htmlElement.style.setProperty('--bg-gradient', 'linear-gradient(135deg, #7f1d1d 0%, #991b1b 50%, #b91c1c 100%)');
+                    htmlElement.style.setProperty('--text-color', '#fecaca');
+                    htmlElement.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.08)');
+                    htmlElement.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.15)');
+                    htmlElement.style.setProperty('--accent-color', '#f87171');
+                    if (fab) fab.style.background = 'linear-gradient(135deg, #f87171 0%, #ef4444 100%)';
+                    break;
+                case 'teal':
+                    htmlElement.style.setProperty('--bg-gradient', 'linear-gradient(135deg, #134e4a 0%, #115e59 50%, #0f766e 100%)');
+                    htmlElement.style.setProperty('--text-color', '#ccfbf1');
+                    htmlElement.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.08)');
+                    htmlElement.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.15)');
+                    htmlElement.style.setProperty('--accent-color', '#2dd4bf');
+                    if (fab) fab.style.background = 'linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%)';
+                    break;
+                default: // dark
+                    htmlElement.style.setProperty('--bg-gradient', 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)');
+                    htmlElement.style.setProperty('--text-color', '#e2e8f0');
+                    htmlElement.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.04)');
+                    htmlElement.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.12)');
+                    htmlElement.style.setProperty('--accent-color', '#818cf8');
+                    if (fab) fab.style.background = 'linear-gradient(135deg, #818cf8 0%, #667eea 100%)';
+                    break;
+            }
+        }
+
+        function loadSavedTheme() {
+            const savedTheme = localStorage.getItem('selectedTheme') || 'dark';
+            
+            // Set the radio button
+            const themeRadio = document.querySelector(`input[name="theme"][value="${savedTheme}"]`);
+            if (themeRadio) {
+                themeRadio.checked = true;
+            }
+            
+            // Apply the theme
+            changeTheme(savedTheme);
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('serviceModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideModal();
+            }
+        });
+
+        document.getElementById('moveServiceModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideMoveServiceModal();
+            }
+        });
+
+        // Handle keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideModal();
+                hideMoveServiceModal();
+            } else if (e.ctrlKey && e.key === 'n') {
+                e.preventDefault();
+                showAddModal();
+            }
+        });
+    </script>
+</body>
+</html>
